@@ -1,0 +1,65 @@
+<script>
+    window.addEventListener('DOMContentLoaded', function (e) {
+
+    });
+
+    /* function ajaxRequest(url) {
+        HttpRequest = new XMLHttpRequest();
+        HttpRequest.onreadystatechange = function () {
+            if (HttpRequest.readyState == 4) {
+                if (HttpRequest.status == 200) {
+                    console.log("Peticion terminada");
+                    console.log(JSON.parse(HttpRequest.responseText));
+                } else {
+                    console.log("Error 404");
+                }
+            }
+        }
+        HttpRequest.open('GET', url, true);
+        HttpRequest.send();
+    } */
+
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        var id_token = googleUser.getAuthResponse().id_token;
+        document.getElementById('user-image').setAttribute('src', profile.getImageUrl());
+        document.querySelector('.user-data').innerHTML = `<ul>
+                <li>${profile.getId()}</li>
+                <li>${profile.getName()}</li>
+                <li>${profile.getImageUrl()}</li>
+                <li>${profile.getEmail()}</li>
+                <li>${id_token}</li>
+            </ul>`;
+        console.log(id_token);
+        ajaxRequest(id_token);
+    }
+
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.disconnect();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+    }
+
+    function ajaxRequest(id_token) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:3000/auth/google');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            console.log('Signed in as: ' + xhr.responseText);
+        };
+        xhr.send('idtoken=' + id_token);
+    }
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
